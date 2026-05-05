@@ -1,0 +1,68 @@
+# ----------------------------
+def a_star(start_state, goal_state):
+    start = Puzzle(start_state)
+
+    open_list = []
+    heapq.heappush(open_list, (0, start))
+
+    visited = set()
+
+    while open_list:
+        _, current = heapq.heappop(open_list)
+
+        if current.is_goal(goal_state):
+            return current
+
+        visited.add(str(current.state))
+
+        for child in current.get_successors():
+            if str(child.state) not in visited:
+                f = child.cost + heuristic(child.state, goal_state)
+                heapq.heappush(open_list, (f, child))
+
+    return None
+
+
+# ----------------------------
+# PRINT SOLUTION PATH
+# ----------------------------
+def print_solution(node):
+    path = []
+    moves = []
+
+    while node:
+        path.append(node)
+        moves.append(node.move)
+        node = node.parent
+
+    path.reverse()
+    moves.reverse()
+
+    print("\n⭐ SOLUTION STEPS ⭐\n")
+
+    for i in range(len(path)):
+        print(f"Step {i}: {moves[i]}")
+        path[i].display()
+
+
+# ----------------------------
+# MAIN PROGRAM
+# ----------------------------
+initial_state = [
+    [1, 2, 3],
+    [4, 0, 6],
+    [7, 5, 8]
+]
+
+goal_state = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 0]
+]
+
+result = a_star(initial_state, goal_state)
+
+if result:
+    print_solution(result)
+else:
+    print("No solution found")
